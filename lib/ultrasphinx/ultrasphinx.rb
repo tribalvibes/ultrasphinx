@@ -14,13 +14,13 @@ module Ultrasphinx
   
   SUBDIR = "config/ultrasphinx"
   
-  DIR = Rails.root?  Rails.root.join(SUBDIR) : SUBDIR
+  DIR = "#{Rails.root}/#{SUBDIR}"
   
   THIS_DIR = File.expand_path(File.dirname(__FILE__))
 
   CONF_PATH = "#{DIR}/#{Rails.env}.conf"
   
-  ENV_BASE_PATH = "#{DIR}/#{Rails.env}.base"
+  ENV_BASE_PATH = "#{DIR}/#{Rails.env}.base" 
   
   GENERIC_BASE_PATH = "#{DIR}/default.base"
   
@@ -64,7 +64,7 @@ module Ultrasphinx
 
   SQL_FUNCTIONS = {
     'mysql' => {
-      'group_concat' => "CAST(GROUP_CONCAT(DISTINCT ? ? SEPARATOR ' ') AS CHAR)",
+      'group_concat' => "GROUP_CONCAT(DISTINCT ? ? SEPARATOR ' ')",
       'delta' => "DATE_SUB(NOW(), INTERVAL ? SECOND)",      
       'hash' => "CAST(CRC32(?) AS unsigned)",
       'range_cast' => "?"
@@ -100,8 +100,8 @@ module Ultrasphinx
       puts msg[0..0].upcase + msg[1..-1]
     else
       msg = "** ultrasphinx: #{msg}"
-      if defined?(RAILS_DEFAULT_LOGGER) && RAILS_DEFAULT_LOGGER
-        RAILS_DEFAULT_LOGGER.warn msg
+      if defined?(Rails) && Rails.logger
+        Rails.logger.warn msg
       else
         STDERR.puts msg
       end
@@ -112,8 +112,8 @@ module Ultrasphinx
   # Debug-mode logger.  
   def self.log msg
     # XXX Method name is stupid.
-    if defined?(RAILS_DEFAULT_LOGGER) && RAILS_DEFAULT_LOGGER
-      RAILS_DEFAULT_LOGGER.debug msg
+    if defined?(Rails) && Rails.logger
+      Rails.logger.debug msg
     else
       STDERR.puts msg
     end
